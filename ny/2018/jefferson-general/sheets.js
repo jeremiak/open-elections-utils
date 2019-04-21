@@ -53,9 +53,12 @@ const transformGovLtGov = data => {
 }
 
 const createTransformSingleCandidate = (office, district, resultRowsIndexes) => {
+  const isUSSenate = office === 'U.S. Senate'
   return data => {
     const candidatesStartingIndex = data[0].indexOf('% Turnout') + 1
     const candidatesEndingIndex = data[0].indexOf('Write-ins') + 1
+    const totalRegisteredIndex = data[0].indexOf('Voter Registration')
+    const totalCastIndex = data[0].indexOf('Total Votes Cast')
     const candidates = data[0]
       .slice(candidatesStartingIndex, candidatesEndingIndex)
       .map((candidate, cIndex) => {
@@ -87,6 +90,28 @@ const createTransformSingleCandidate = (office, district, resultRowsIndexes) => 
           candidate,
           votes
         })
+
+        if (isUSSenate) {
+          rows.push({
+            county: 'Jefferson',
+            precinct,
+            office: 'Registered Voters',
+            district,
+            party: '',
+            candidate: '',
+            votes: row[totalRegisteredIndex]
+          })
+
+          rows.push({
+            county: 'Jefferson',
+            precinct,
+            office: 'Ballots Cast',
+            district,
+            party: '',
+            candidate: '',
+            votes: row[totalCastIndex]
+          })
+        }
       })
     })
 
