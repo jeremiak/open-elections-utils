@@ -2,9 +2,11 @@ const sheetNames = [
   'Governor & Lt. Governor',
   'Comptroller',
   'Attorney General',
-  'State Supreme Court',
   'U.S. Senate',
-  '21st Congressional'
+  '21st Congressional',
+  '48th State Senate',
+  '116th Assembly District',
+  '117th Assembly District',
 ]
 
 const transformGovLtGov = data => {
@@ -52,6 +54,14 @@ const transformGovLtGov = data => {
   return rows
 }
 
+/**
+ * Returns a transformer function that can take an XLS sheet
+ * and normalize the data into the open elections format
+ * @param {string} office 
+ * @param {string} district 
+ * @param {array} resultRowsIndexes 
+ * @returns {Function}
+ */
 const createTransformSingleCandidate = (office, district, resultRowsIndexes) => {
   const isUSSenate = office === 'U.S. Senate'
   return data => {
@@ -74,7 +84,7 @@ const createTransformSingleCandidate = (office, district, resultRowsIndexes) => 
 
     const rows = []
 
-    resultRows.forEach(row => {
+    resultRows.forEach((row, ri) => {
       const precinct = row[0]
       candidates.forEach((c, cIndex) => {
         const candidate = c[0]
@@ -115,6 +125,8 @@ const createTransformSingleCandidate = (office, district, resultRowsIndexes) => 
       })
     })
 
+
+    console.log(`${office}: ${JSON.stringify(rows[0])}`)
     return rows
   }
 }

@@ -10,9 +10,13 @@ const workSheets = xlsx.parse(source).filter(s => {
   return sheetNames.includes(s.name)
 }).map(s => {
   const transformer = transformers[s.name] || (z => z)
-  return transformer(s.data)
+  return {
+    name: s.name,
+    data: transformer(s.data)
+  }
 }).reduce((accum, next) => {
-  return accum.concat(next)
+  console.log(`next length (${next.name}): ${next.data.length}`)
+  return accum.concat(next.data)
 }, [])
 
 const csv = d3.csvFormat(workSheets, [
